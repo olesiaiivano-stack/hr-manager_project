@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Interview Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.9em;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .card-content p {
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #e9ecef;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .skill-badge {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .interview-badge {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .interview-card {
+            border-left: 4px solid #28a745;
+            margin-top: 15px;
+        }
+
+        .time-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>HR Interview Manager</h1>
+            <p class="subtitle">Управление техническими собеседованиями</p>
+        </header>
+
+        <div class="main-content">
+            
+            <div class="section">
+                <h2>
+                    Специалисты
+                    <button class="btn" onclick="openSpecialistModal()">
+                        <i class="fas fa-plus"></i> Добавить специалиста
+                    </button>
+                </h2>
+                <div id="skills-section">
+                    <h3>Навыки</h3>
+                    <div class="skills-container" id="skills-list"></div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <input type="text" id="new-skill" placeholder="Новый навык">
+                        <button class="btn btn-secondary" onclick="addSkill()" style="margin-top: 10px;">
+                            <i class="fas fa-plus"></i> Добавить навык
+                        </button>
+                    </div>
+                </div>
+                <div id="specialists-list" class="card">Загрузка специалистов...</div>
+            </div>
+
+            
+            <div class="section">
+                <h2>
+                    Собеседования
+                    <div>
+                        <select id="duration-select" style="padding: 8px; border-radius: 5px; margin-right: 10px;">
+                            <option value="60">Длительность: 1 час</option>
+                            <option value="90">Длительность: 1.5 часа</option>
+                            <option value="120">Длительность: 2 часа</option>
+                        </select>
+                    </div>
+                </h2>
+                <div id="alert" class="alert"></div>
+                <div id="interviews-list" class="card">Загрузка собеседований...</div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="specialist-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-specialist-title">Добавить специалиста</h2>
+            <form id="specialist-form">
+                <div class="form-group">
+                    <label for="full-name">ФИО *</label>
+                    <input type="text" id="full-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="available-from">Доступен с *</label>
+                    <input type="time" id="available-from" required>
+                </div>
+                <div class="form-group">
+                    <label for="available-to">Доступен до *</label>
+                    <input type="time" id="available-to" required>
+                </div>
+                <div class="form-group">
+                    <label>Навыки</label>
+                    <div id="specialist-skills" class="skills-container"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeSpecialistModal()">
+                        Отмена
+                    </button>
+                    <button type="submit" class="btn">
+                        Сохранить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="interview-modal" class="modal">
+        <div class="modal-content">
+            <h2>Добавить собеседование</h2>
+            <form id="interview-form">
+                <div class="form-group">
+                    <label for="candidate-name">ФИО соискателя *</label>
+                    <input type="text" id="candidate-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="interview-time">Время собеседования *</label>
+                    <input type="time" id="interview-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="specialist-select">Специалист *</label>
+                    <select id="specialist-select" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Навыки соискателя</label>
+                    <div id="interview-skills" class="skills-container"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeInterviewModal()">
+                        Отмена
+                    </button>
+                    <button type="submit" class="btn">
+                        Назначить собеседование
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="transfer-modal" class="modal">
+        <div class="modal-content">
+            <h2>Перевести собеседование</h2>
+            <form id="transfer-form">
+                <div class="form-group">
+                    <label for="current-specialist">Текущий специалист</label>
+                    <input type="text" id="current-specialist" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="new-specialist-select">Новый специалист *</label>
+                    <select id="new-specialist-select" required></select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeTransferModal()">
+                        Отмена
+                    </button>
+                    <button type="submit" class="btn">
+                        Перевести
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let specialists = [];
+        let skills = [];
+        let currentSpecialistId = null;
+        let currentInterviewId = null;
+
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSkills();
+            loadSpecialists();
+        });
+
+        // Загрузка навыков
+        async function loadSkills() {
+            try {
+                const response = await fetch(`${API_BASE}/skills`);
+                skills = await response.json();
+                renderSkills();
+            } catch (error) {
+                showAlert('Ошибка загрузки навыков', 'error');
+            }
+        }
+
+        // Загрузка специалистов
+        async function loadSpecialists() {
+            try {
+                const response = await fetch(`${API_BASE}/specialists`);
+                specialists = await response.json();
+                renderSpecialists();
+                renderSpecialistSelect();
+            } catch (error) {
+                showAlert('Ошибка загрузки специалистов', 'error');
+            }
+        }
+
+        // Отображение навыков
+        function renderSkills() {
+            const skillsList = document.getElementById('skills-list');
+            const specialistSkills = document.getElementById('specialist-skills');
+            const interviewSkills = document.getElementById('interview-skills');
+            
+            skillsList.innerHTML = '';
+            specialistSkills.innerHTML = '';
+            interviewSkills.innerHTML = '';
+            
+            skills.forEach(skill => {
+                // Отображение в общем списке
+                const skillBadge = document.createElement('span');
+                skillBadge.className = 'badge skill-badge';
+                skillBadge.textContent = skill.name;
+                skillsList.appendChild(skillBadge);
+                
+                // Чекбоксы для специалиста
+                const specialistCheckbox = document.createElement('label');
+                specialistCheckbox.className = 'skill-checkbox';
+                specialistCheckbox.innerHTML = `
+                    <input type="checkbox" value="${skill.id}" class="skill-checkbox-input">
+                    ${skill.name}
+                `;
+                specialistSkills.appendChild(specialistCheckbox);
+                
+                // Чекбоксы для собеседования
+                const interviewCheckbox = document.createElement('label');
+                interviewCheckbox.className = 'skill-checkbox';
+                interviewCheckbox.innerHTML = `
+                    <input type="checkbox" value="${skill.id}" class="interview-skill-checkbox">
+                    ${skill.name}
+                `;
+                interviewSkills.appendChild(interviewCheckbox);
+            });
+        }
+
+        // Отображение специалистов
+        function renderSpecialists() {
+            const specialistsList = document.getElementById('specialists-list');
+            
+            if (specialists.length === 0) {
+                specialistsList.innerHTML = '<p>Нет специалистов. Добавьте первого специалиста.</p>';
+                return;
+            }
+            
+            specialistsList.innerHTML = '';
+            
+            specialists.forEach(specialist => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <h3>
+                        ${specialist.full_name}
+                        <div>
+                            <button class="btn btn-sm" onclick="editSpecialist('${specialist.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteSpecialist('${specialist.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </h3>
+                    <div class="card-content">
+                        <div>
+                            <p><strong>ID:</strong> ${specialist.id}</p>
+                            <p><strong>Доступность:</strong> ${specialist.available_from} - ${specialist.available_to}</p>
+                        </div>
+                        <div>
+                            <p><strong>Навыки:</strong></p>
+                            <div>
+                                ${specialist.skills.map(skill => 
+                                    `<span class="badge skill-badge">${skill.name}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="time-info">
+                        <strong>Собеседования (${specialist.interviews.length}):</strong>
+                        ${specialist.interviews.length > 0 ? '' : '<p>Нет назначенных собеседований</p>'}
+                    </div>
+                    ${specialist.interviews.map(interview => `
+                        <div class="card interview-card">
+                            <h4>
+                                ${interview.candidate_name}
+                                <div>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteInterview('${interview.id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <button class="btn btn-sm" onclick="openTransferModal('${interview.id}', '${specialist.id}')">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </button>
+                                </div>
+                            </h4>
+                            <p><strong>Время:</strong> ${interview.interview_time} (${interview.duration_minutes} мин.)</p>
+                            <p><strong>Навыки соискателя:</strong></p>
+                            <div>
+                                ${interview.skills.map(skill => 
+                                    `<span class="badge interview-badge">${skill.name}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                    <div class="actions">
+                        <button class="btn btn-sm" onclick="openInterviewModal('${specialist.id}')">
+                            <i class="fas fa-plus"></i> Добавить собеседование
+                        </button>
+                    </div>
+                `;
+                specialistsList.appendChild(card);
+            });
+        }
+
+        // Отображение выпадающего списка специалистов
+        function renderSpecialistSelect() {
+            const specialistSelect = document.getElementById('specialist-select');
+            const newSpecialistSelect = document.getElementById('new-specialist-select');
+            
+            specialistSelect.innerHTML = '<option value="">Выберите специалиста</option>';
+            newSpecialistSelect.innerHTML = '<option value="">Выберите специалиста</option>';
+            
+            specialists.forEach(specialist => {
+                const option = document.createElement('option');
+                option.value = specialist.id;
+                option.textContent = specialist.full_name;
+                specialistSelect.appendChild(option);
+                
+                const option2 = option.cloneNode(true);
+                newSpecialistSelect.appendChild(option2);
+            });
+        }
+
+        // Добавление нового навыка
+        async function addSkill() {
+            const newSkillInput = document.getElementById('new-skill');
+            const skillName = newSkillInput.value.trim();
+            
+            if (!skillName) {
+                showAlert('Введите название навыка', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/skills`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: skillName })
+                });
+                
+                if (response.ok) {
+                    newSkillInput.value = '';
+                    loadSkills();
+                    showAlert('Навык добавлен успешно', 'success');
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Ошибка добавления навыка', 'error');
+            }
+        }
+
+        // Открытие модального окна специалиста
+        function openSpecialistModal(specialistId = null) {
+            currentSpecialistId = specialistId;
+            const modal = document.getElementById('specialist-modal');
+            const title = document.getElementById('modal-specialist-title');
+            const form = document.getElementById('specialist-form');
+            
+            if (specialistId) {
+                title.textContent = 'Редактировать специалиста';
+                const specialist = specialists.find(s => s.id === specialistId);
+                if (specialist) {
+                    document.getElementById('full-name').value = specialist.full_name;
+                    document.getElementById('available-from').value = specialist.available_from;
+                    document.getElementById('available-to').value = specialist.available_to;
+                    
+                    // Отметить навыки специалиста
+                    document.querySelectorAll('.skill-checkbox-input').forEach(checkbox => {
+                        checkbox.checked = specialist.skills.some(skill => skill.id === checkbox.value);
+                    });
+                }
+            } else {
+                title.textContent = 'Добавить специалиста';
+                form.reset();
+                document.querySelectorAll('.skill-checkbox-input').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // Закрытие модального окна специалиста
+        function closeSpecialistModal() {
+            document.getElementById('specialist-modal').classList.remove('active');
+            document.getElementById('specialist-form').reset();
+        }
+
+        // Сохранение специалиста
+        document.getElementById('specialist-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                full_name: document.getElementById('full-name').value,
+                available_from: document.getElementById('available-from').value,
+                available_to: document.getElementById('available-to').value,
+                skills: Array.from(document.querySelectorAll('.skill-checkbox-input:checked'))
+                    .map(cb => cb.value)
+            };
+            
+            try {
+                const url = currentSpecialistId ? 
+                    `${API_BASE}/specialists/${currentSpecialistId}` : 
+                    `${API_BASE}/specialists`;
+                
+                const response = await fetch(url, {
+                    method: currentSpecialistId ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    closeSpecialistModal();
+                    loadSpecialists();
+                    showAlert(
+                        currentSpecialistId ? 
+                        'Специалист обновлен успешно' : 
+                        'Специалист добавлен успешно', 
+                        'success'
+                    );
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Ошибка сохранения специалиста', 'error');
+            }
+        });
+
+        // Редактирование специалиста
+        function editSpecialist(specialistId) {
+            openSpecialistModal(specialistId);
+        }
+
+        // Удаление специалиста
+        async function deleteSpecialist(specialistId) {
+            if (!confirm('Вы уверены, что хотите удалить этого специалиста?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/specialists/${specialistId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadSpecialists();
+                    showAlert('Специалист удален успешно', 'success');
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Ошибка удаления специалиста', 'error');
+            }
+        }
+
+        // Открытие модального окна собеседования
+        function openInterviewModal(specialistId = null) {
+            const modal = document.getElementById('interview-modal');
+            const specialistSelect = document.getElementById('specialist-select');
+            
+            if (specialistId) {
+                specialistSelect.value = specialistId;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // Закрытие модального окна собеседования
+        function closeInterviewModal() {
+            document.getElementById('interview-modal').classList.remove('active');
+            document.getElementById('interview-form').reset();
+        }
+
+        // Сохранение собеседования
+        document.getElementById('interview-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                specialist_id: document.getElementById('specialist-select').value,
+                candidate_name: document.getElementById('candidate-name').value,
+                interview_time: document.getElementById('interview-time').value,
+                duration_minutes: parseInt(document.getElementById('duration-select').value),
+                skills: Array.from(document.querySelectorAll('.interview-skill-checkbox:checked'))
+                    .map(cb => cb.value)
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/interviews`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    closeInterviewModal();
+                    loadSpecialists();
+                    showAlert('Собеседование назначено успешно', 'success');
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Ошибка назначения собеседования', 'error');
+            }
+        });
+
+        // Удаление собеседования
+        async function deleteInterview(interviewId) {
+            if (!confirm('Вы уверены, что хотите удалить это собеседование?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/interviews/${interviewId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    loadSpecialists();
+                    showAlert('Собеседование удалено успешно', 'success');
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Ошибка удаления собеседования', 'error');
+            }
+        }
+
+        // Открытие модального окна перевода
+        function openTransferModal(interviewId, currentSpecialistId) {
+            currentInterviewId = interviewId;
+            const modal = document.getElementById('transfer-modal');
+            const currentSpecialist = specialists.find(s => s.id === currentSpecialistId);
+            
+            if (currentSpecialist) {
+                document.getElementById('current-specialist').value = currentSpecialist.full_name;
+            }
+            
+            // Исключить текущего специалиста из списка
+            const newSpecialistSelect = document.getElementById('new-specialist-select');
+            Array.from(newSpecialistSelect.options).forEach(option => {
+                option.hidden = option.value === currentSpecialistId;
+            });
+            
+            modal.classList.add('active');
+        }
+
+        // Закрытие модального окна перевода
+        function closeTransferModal() {
+            document.getElementById('transfer-modal').classList.remove('active');
+            document.getElementById('transfer-form').reset();
+            
+            // Показать все опции
+            const newSpecialistSelect = document.getElementById('new-specialist-select');
+            Array.from(newSpecialistSelect.options).forEach(option => {
+                option.hidden = false;
+            });
+        }
+
+        // Перевод собеседования
+        document.getElementById('transfer-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                new_specialist_id: document.getElementById('new-specialist-select').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/interviews/${currentInterviewId}/transfer`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    closeTransferModal();
+                    loadSpecialists();
+                    showAlert('Собеседование переведено успешно', 'success');
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Ошибка перевода собеседования', 'error');
+            }
+        });
+
+        // Показать уведомление
+        function showAlert(message, type = 'info') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
